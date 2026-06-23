@@ -4,6 +4,31 @@
 
 const GAS_DEPLOYMENT_URL = import.meta.env.VITE_GAS_DEPLOYMENT_URL
 
+const statusMap = {
+  '準備看': 'planned',
+  '觀看中': 'watching',
+  '已完結': 'completed'
+}
+
+const normalizeSheetRecord = (record) => {
+  const tmdbId = Number(record['TMDB ID']) || null
+  return {
+    id: tmdbId || Date.now(),
+    tmdbId,
+    title: record['標題'] || '',
+    poster: record['海報'] || null,
+    totalEpisodes: Number(record['總集數']) || 0,
+    currentEpisode: Number(record['當前集數']) || 0,
+    status: statusMap[record['狀態']] || 'planned',
+    rating: Number(record['評分']) || 0,
+    notes: record['備註'] || '',
+    addedDate: record['添加日期'] || new Date().toISOString(),
+    lastUpdated: record['最後更新'] || new Date().toISOString(),
+    nextEpisodeAirDate: record['下一集上映日期'] || null,
+    completedDate: record['完成日期'] || null
+  }
+}
+
 /**
  * 向 Google Sheets 同步進度
  * @param {Object} animeData - 動漫/劇集數據
@@ -65,7 +90,9 @@ export const getFromGoogleSheets = async () => {
     }
 
     const result = await response.json()
-    return result.data || []
+    return Array.isArray(result.data)
+      ? result.data.map(normalizeSheetRecord)
+      : []
   } catch (error) {
     console.error('從 Google Sheets 讀取失敗：', error)
     return []

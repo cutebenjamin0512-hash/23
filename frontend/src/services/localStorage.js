@@ -39,8 +39,13 @@ export const saveAnime = (animeList) => {
  */
 export const addAnime = (anime) => {
   const list = getAllAnime()
+  const exists = list.some((item) => item.tmdbId === anime.tmdbId)
+  if (exists) {
+    return list
+  }
+
   const newAnime = {
-    id: Date.now(), // 使用時間戳作為本地 ID
+    id: anime.tmdbId || Date.now(), // 使用 TMDB ID 作為穩定 ID
     tmdbId: anime.tmdbId,
     title: anime.title,
     poster: anime.poster,
@@ -61,7 +66,7 @@ export const addAnime = (anime) => {
 
 /**
  * 更新動漫/劇集進度
- * @param {number} id - 本地 ID
+ * @param {number|string} id - 本地 ID
  * @param {Partial<Object>} updates - 要更新的字段
  * @returns {Array} 更新後的列表
  */

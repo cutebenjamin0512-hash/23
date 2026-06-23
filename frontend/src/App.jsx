@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import SearchBar from './components/SearchBar'
 import Board from './components/Board'
 import { searchMedia, getPosterUrl, getNextEpisodeAirDate, formatDate } from './services/tmdbApi'
-import { getAllAnime, addAnime, updateAnime, deleteAnime } from './services/localStorage'
-import { syncToGoogleSheets } from './services/gasService'
+import { getAllAnime, saveAnime, addAnime, updateAnime, deleteAnime } from './services/localStorage'
+import { syncToGoogleSheets, getFromGoogleSheets } from './services/gasService'
 import './App.css'
 
 function App() {
@@ -13,10 +13,49 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [showSearchResults, setShowSearchResults] = useState(false)
 
+  const mergeRemoteData = (localItems, remoteItems) => {
+    const map = new Map()
+
+    localItems.forEach((item) => {
+      if (item.tmdbId) {
+        map.set(item.tmdbId, item)
+      } else {
+        map.set(item.id, item)
+      }
+    })
+
+    remoteItems.forEach((item) => {
+      if (!item.tmdbId) return
+      const existing = map.get(item.tmdbId)
+      if (existing) {
+        map.set(item.tmdbId, {
+          ...existing,
+          ...item,
+          id: existing.id || item.id
+        })
+      } else {
+        map.set(item.tmdbId, item)
+      }
+    })
+
+    return Array.from(map.values())
+  }
+
   // 初始化數據
   useEffect(() => {
     const saved = getAllAnime()
     setAnimeList(saved)
+
+    const loadSheetData = async () => {
+      const sheetData = await getFromGoogleSheets()
+      if (sheetData.length > 0) {
+        const merged = mergeRemoteData(saved, sheetData)
+        setAnimeList(merged)
+        saveAnime(merged)
+      }
+    }
+
+    loadSheetData()
   }, [])
 
   // 搜尋動漫
@@ -50,9 +89,23 @@ function App() {
 
   // 添加動漫
   const handleAddAnime = (searchResult) => {
+    const currentList = getAllAnime()
+    const alreadyAdded = currentList.some((item) => item.tmdbId === searchResult.tmdbId)
+
+    if (alreadyAdded) {
+      alert('此作品已存在清單中。')
+      setShowSearchResults(false)
+      return
+    }
+
     const newList = addAnime(searchResult)
     setAnimeList(newList)
     setShowSearchResults(false)
+
+    const anime = newList.find((a) => a.tmdbId === searchResult.tmdbId)
+    if (anime) {
+      syncToGoogleSheets(anime).catch((err) => console.log('GAS 同步失敗（可選）:', err))
+    }
   }
 
   // 更新進度
@@ -63,7 +116,7 @@ function App() {
     // 同步到 Google Sheets
     const anime = newList.find((a) => a.id === id)
     if (anime) {
-      syncToGoogleSheets(anime).catch(err => console.log('GAS 同步失敗（可選）:', err))
+      syncToGoogleSheets(anime).catch((err) => console.log('GAS 同步失敗（可選）:', err))
     }
   }
 
