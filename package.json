@@ -1,0 +1,20 @@
+{
+  "name": "anime-tracker",
+  "version": "1.0.0",
+  "description": "動漫/影集追蹤系統 - 管理你的追番進度",
+  "type": "module",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "setup": "npm install && cd frontend && npm install"
+  },
+  "keywords": [
+    "anime",
+    "tracking",
+    "react",
+    "tmdb"
+  ],
+  "author": "AnimeTracker",
+  "license": "MIT"
+}

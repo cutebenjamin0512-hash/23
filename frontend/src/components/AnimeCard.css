@@ -1,0 +1,271 @@
+/* 動漫卡片樣式 */
+
+.anime-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  animation: cardSlideIn 0.4s ease;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.anime-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 海報部分 */
+.card-poster {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.poster-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.anime-card:hover .poster-image {
+  transform: scale(1.05);
+}
+
+.poster-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* 狀態徽章 */
+.status-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: var(--transition);
+}
+
+.status-planned {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.status-watching {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+}
+
+.status-completed {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+}
+
+.status-default {
+  background: var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* 卡片內容 */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+}
+
+.card-progress {
+  margin-bottom: 12px;
+}
+
+.next-episode {
+  font-size: 0.85em;
+  color: var(--warning-color);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.card-rating {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+/* 操作按鈕 */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  flex: 1;
+  min-width: 60px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 500;
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-select {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.btn-select:hover {
+  border-color: var(--primary-color);
+  background: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--danger-color), #e53e3e);
+  color: white;
+  min-width: 40px;
+  padding: 8px;
+}
+
+.btn-danger:hover {
+  transform: scale(1.05);
+}
+
+.btn-confirm {
+  background: var(--success-color);
+  color: white;
+}
+
+.btn-cancel {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 編輯進度 */
+.edit-progress {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.edit-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.edit-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* 響應式 */
+@media (max-width: 768px) {
+  .anime-card {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0;
+  }
+
+  .card-poster {
+    height: auto;
+    aspect-ratio: 2 / 3;
+  }
+
+  .card-content {
+    padding: 12px;
+  }
+
+  .card-title {
+    font-size: 0.95em;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .anime-card {
+    grid-template-columns: 100px 1fr;
+  }
+
+  .card-content {
+    padding: 10px;
+  }
+
+  .card-title {
+    font-size: 0.9em;
+    margin-bottom: 8px;
+  }
+
+  .btn {
+    font-size: 0.75em;
+    padding: 6px 8px;
+  }
+
+  .status-badge {
+    font-size: 0.6em;
+    padding: 4px 8px;
+  }
+}
